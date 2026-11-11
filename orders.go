@@ -75,6 +75,9 @@ type GetOrdersParams struct {
 	MinTs       int64
 	MaxTs       int64
 	Subaccount  int
+	// OnlySubaccount, when set, limits the read to that one sub-account, the primary (0) included. Subaccount
+	// omits 0 from the query, and Kalshi reads an omitted subaccount as every sub-account.
+	OnlySubaccount *int
 }
 
 func (p GetOrdersParams) toMap() map[string]string {
@@ -87,6 +90,7 @@ func (p GetOrdersParams) toMap() map[string]string {
 		Int64("min_ts", p.MinTs).
 		Int64("max_ts", p.MaxTs).
 		Int("subaccount", p.Subaccount).
+		IntPtr("subaccount", p.OnlySubaccount).
 		Build()
 }
 

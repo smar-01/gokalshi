@@ -24,6 +24,7 @@ type HTTPClient interface {
 
 	// Portfolio
 	GetBalance(ctx context.Context) (GetBalanceResponse, error)
+	GetBalanceWithParams(ctx context.Context, params GetBalanceParams) (GetBalanceResponse, error)
 	GetPositions(ctx context.Context, params GetPositionsParams) (GetPositionsResponse, error)
 	GetFills(ctx context.Context, params GetFillsParams) (GetFillsResponse, error)
 	GetSettlements(ctx context.Context, params GetSettlementsParams) (GetSettlementsResponse, error)
@@ -87,6 +88,8 @@ type HTTPClient interface {
 	CancelOrderV2(ctx context.Context, orderID string, params CancelOrderV2Params) (CancelOrderV2Response, error)
 	AmendOrderV2(ctx context.Context, orderID string, req AmendOrderV2Request) (AmendOrderV2Response, error)
 	DecreaseOrderV2(ctx context.Context, orderID string, req DecreaseOrderV2Request) (DecreaseOrderV2Response, error)
+	AmendOrderV2WithParams(ctx context.Context, orderID string, req AmendOrderV2Request, params OrderSubaccountParams) (AmendOrderV2Response, error)
+	DecreaseOrderV2WithParams(ctx context.Context, orderID string, req DecreaseOrderV2Request, params OrderSubaccountParams) (DecreaseOrderV2Response, error)
 
 	// Historical
 	GetHistoricalCutoff(ctx context.Context) (GetHistoricalCutoffResponse, error)

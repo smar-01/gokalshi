@@ -108,6 +108,32 @@ func (c *Client) DecreaseOrderV2(ctx context.Context, orderID string, req Decrea
 	return postJSON[DecreaseOrderV2Response](c, ctx, path, req, 10.0)
 }
 
+// OrderSubaccountParams selects the sub-account an amend or a decrease acts on (query parameter subaccount). 0, the
+// primary account, is Kalshi's default and is omitted.
+type OrderSubaccountParams struct {
+	Subaccount int
+}
+
+func (p OrderSubaccountParams) toMap() map[string]string {
+	return NewQuery().Int("subaccount", p.Subaccount).Build()
+}
+
+// AmendOrderV2WithParams is AmendOrderV2 for an order in a sub-account.
+//
+// See https://docs.kalshi.com/api-reference/orders/amend-order-v2
+func (c *Client) AmendOrderV2WithParams(ctx context.Context, orderID string, req AmendOrderV2Request, params OrderSubaccountParams) (AmendOrderV2Response, error) {
+	path := fmt.Sprintf("%s/%s/amend", pathEventOrders, orderID)
+	return doJSON[AmendOrderV2Response](c, ctx, "POST", path, 0, 10.0, 1, req, params.toMap())
+}
+
+// DecreaseOrderV2WithParams is DecreaseOrderV2 for an order in a sub-account.
+//
+// See https://docs.kalshi.com/api-reference/orders/decrease-order-v2
+func (c *Client) DecreaseOrderV2WithParams(ctx context.Context, orderID string, req DecreaseOrderV2Request, params OrderSubaccountParams) (DecreaseOrderV2Response, error) {
+	path := fmt.Sprintf("%s/%s/decrease", pathEventOrders, orderID)
+	return doJSON[DecreaseOrderV2Response](c, ctx, "POST", path, 0, 10.0, 1, req, params.toMap())
+}
+
 // CancelOrderV2Params are query parameters for CancelOrderV2.
 type CancelOrderV2Params struct {
 	// MarketTicker enables auto-routing when ExchangeIndex is omitted or -1.

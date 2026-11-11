@@ -18,6 +18,27 @@ func (c *Client) GetBalance(ctx context.Context) (GetBalanceResponse, error) {
 	return getJSON[GetBalanceResponse](c, ctx, pathPortfolio+"/balance", nil)
 }
 
+// GetBalanceParams are GetBalance's query parameters. Subaccount 0, the primary account, is Kalshi's default and is
+// omitted; ExchangeIndex nil reads every exchange index.
+type GetBalanceParams struct {
+	Subaccount    int
+	ExchangeIndex *int
+}
+
+func (p GetBalanceParams) toMap() map[string]string {
+	return NewQuery().
+		Int("subaccount", p.Subaccount).
+		IntPtr("exchange_index", p.ExchangeIndex).
+		Build()
+}
+
+// GetBalanceWithParams is GetBalance for one sub-account and, optionally, one exchange index.
+//
+// See https://docs.kalshi.com/api-reference/portfolio/get-balance
+func (c *Client) GetBalanceWithParams(ctx context.Context, params GetBalanceParams) (GetBalanceResponse, error) {
+	return getJSON[GetBalanceResponse](c, ctx, pathPortfolio+"/balance", params.toMap())
+}
+
 // GetPositions — Get Positions
 //
 // GET /trade-api/v2/portfolio/positions
@@ -112,6 +133,9 @@ type GetFillsParams struct {
 	Limit      int
 	Cursor     string
 	Subaccount int
+	// OnlySubaccount, when set, limits the read to that one sub-account, the primary (0) included. Subaccount
+	// omits 0 from the query, and Kalshi reads an omitted subaccount as every sub-account.
+	OnlySubaccount *int
 }
 
 func (p GetFillsParams) toMap() map[string]string {
@@ -123,6 +147,7 @@ func (p GetFillsParams) toMap() map[string]string {
 		Int("limit", p.Limit).
 		String("cursor", p.Cursor).
 		Int("subaccount", p.Subaccount).
+		IntPtr("subaccount", p.OnlySubaccount).
 		Build()
 }
 
@@ -135,6 +160,9 @@ type GetSettlementsParams struct {
 	Limit       int
 	Cursor      string
 	Subaccount  int
+	// OnlySubaccount, when set, limits the read to that one sub-account, the primary (0) included. Subaccount
+	// omits 0 from the query, and Kalshi reads an omitted subaccount as every sub-account.
+	OnlySubaccount *int
 }
 
 func (p GetSettlementsParams) toMap() map[string]string {
@@ -146,6 +174,7 @@ func (p GetSettlementsParams) toMap() map[string]string {
 		Int("limit", p.Limit).
 		String("cursor", p.Cursor).
 		Int("subaccount", p.Subaccount).
+		IntPtr("subaccount", p.OnlySubaccount).
 		Build()
 }
 
